@@ -273,6 +273,23 @@ def play_pattern(pattern):
         
         time.sleep(0.3)
 
+def play_fail():
+    sleep_time = 0.45
+    for x in range(4):
+        playtone(tones["D5"])
+        button_led_1.value(1)
+        button_led_2.value(1)
+        button_led_3.value(1)
+        button_led_4.value(1)
+        time.sleep(sleep_time)
+        bequiet()
+        button_led_1.value(0)
+        button_led_2.value(0)
+        button_led_3.value(0)
+        button_led_4.value(0)
+        
+        time.sleep(0.3)
+
 
 def playsong():
     mysong = ["E5","G5","A5","P","E5","G5","B5","A5","P","E5","G5","A5","P","G5","E5"]
@@ -295,12 +312,33 @@ def playsong():
     bequiet()
     time.sleep(2)
 
+def get_difficulty(current_level):
+    max_level = current_level
+    button_down = False
+    if button_1.raw_value() == 0:
+        max_level = 5
+        button_down = True
+    if button_2.raw_value() == 0:
+        max_level = 10
+        button_down = True
+    if button_3.raw_value() == 0:
+        max_level = 15
+        button_down = True
+    if button_4.raw_value() == 0:
+        max_level = 20
+        button_down = True
+    
+    if button_down:
+        return max_level
+    else:
+        return current_level
 
 p = []
 level = 0
-max_level = 5
+max_level = get_difficulty(10)
 
 while level < max_level:
+    print(level)
     p.append(random.randint(1,4))
     play_pattern(p)
     if player_input_pattern(p):
@@ -312,6 +350,8 @@ while level < max_level:
             level = 0
     else:
         time.sleep(0.5)
-        play_pattern([4,4,4])
+        play_fail()
+        time.sleep(1.5)
+        max_level = get_difficulty(max_level)
         p.clear()
         level = 0
